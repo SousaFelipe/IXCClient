@@ -28,8 +28,8 @@ public class IXCModel {
 
 
 
-    protected String get(Arguments args) {
-        String response = null;
+    protected IXCResponse get(Arguments args) {
+        IXCResponse response = null;
 
         try {
             response = this.client.get(args);

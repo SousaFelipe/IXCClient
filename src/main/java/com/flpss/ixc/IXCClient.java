@@ -82,7 +82,7 @@ public class IXCClient {
 
 
 
-    public String get(Arguments args) throws IOException, InterruptedException {
+    public IXCResponse get(Arguments args) throws IOException, InterruptedException {
 
         this.request = HttpRequest.newBuilder()
             .POST(args.publisher())
@@ -94,6 +94,6 @@ public class IXCClient {
 
         HttpResponse<String> response = this.client.send(this.request, HttpResponse.BodyHandlers.ofString());
 
-        return response.body();
+        return new IXCResponse(response.body());
     }
 }

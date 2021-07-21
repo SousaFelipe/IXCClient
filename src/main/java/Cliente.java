@@ -1,7 +1,9 @@
 
 
+
 import com.flpss.ixc.Arguments;
 import com.flpss.ixc.IXCModel;
+import org.json.JSONObject;
 
 
 public class Cliente extends IXCModel {
@@ -14,13 +16,13 @@ public class Cliente extends IXCModel {
 
 
 
-    public String get(String query) {
+    public JSONObject get(String query) {
         String qtype = query.matches(".*\\d.*") ? "cnpj_cpf" : "razao";
 
         Arguments args = new Arguments(this)
                 .add("qtype", qtype)
                 .add("query", query);
 
-        return super.get(args);
+        return super.get(args).toJSON();
     }
 }

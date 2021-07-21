@@ -1,7 +1,7 @@
 package com.flpss.ixc;
 
 
-
+import org.json.JSONObject;
 
 
 public class IXCResponse {
@@ -12,7 +12,14 @@ public class IXCResponse {
 
 
 
+
     public IXCResponse(String responseBody) {
         this.responseBody = responseBody;
+    }
+
+
+
+    public JSONObject toJSON() {
+        return new JSONObject(this.responseBody);
     }
 }
