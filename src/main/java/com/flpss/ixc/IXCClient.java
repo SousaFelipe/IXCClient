@@ -4,6 +4,8 @@ package com.flpss.ixc;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
@@ -15,6 +17,7 @@ import java.net.http.HttpResponse;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
+import java.util.Properties;
 
 
 public class IXCClient {
@@ -30,7 +33,6 @@ public class IXCClient {
     HttpRequest request;
 
 
-
     X509TrustManager manager = new X509TrustManager() {
         public X509Certificate[] getAcceptedIssuers() { return new X509Certificate[] { }; }
         public void checkClientTrusted(X509Certificate[] certs, String authType) { }
@@ -40,9 +42,7 @@ public class IXCClient {
 
 
     public IXCClient() {
-
-        this.host = "https://agilityquixeramobim.com.br/webservice/v1/";
-        this.token = "6:d94f8ccff332c49a266088ea3e0afaa2bdac77157bc4c698d7ab7e35971192bd";
+        loadProperties();
 
         SSLContext sslContext = null;
 
@@ -62,6 +62,18 @@ public class IXCClient {
 
 
 
+    public void setHost(String host) {
+        this.host = "https://".concat(host).concat("/webservice/v1/");
+    }
+
+
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+
+
     public void setTarget(String target) {
         this.target = target;
     }
@@ -70,14 +82,6 @@ public class IXCClient {
 
     private String uri() {
         return this.host.concat(this.target).concat("/");
-    }
-
-
-
-    private String headerToken() {
-        byte[] buffer = Base64.getEncoder().encode(this.token.getBytes(StandardCharsets.UTF_8));
-        String fromBuffer = new String(buffer);
-        return "Basic ".concat(fromBuffer);
     }
 
 
@@ -95,5 +99,30 @@ public class IXCClient {
         HttpResponse<String> response = this.client.send(this.request, HttpResponse.BodyHandlers.ofString());
 
         return new IXCResponse(response.body());
+    }
+
+
+
+    private String headerToken() {
+        byte[] buffer = Base64.getEncoder().encode(this.token.getBytes(StandardCharsets.UTF_8));
+        String fromBuffer = new String(buffer);
+        return "Basic ".concat(fromBuffer);
+    }
+
+
+
+    private void loadProperties() {
+
+        Properties properties = new Properties();
+
+        try (FileInputStream fis = new FileInputStream("config.properties")) {
+            properties.load(fis);
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        setHost(properties.getProperty("app.host"));
+        setToken(properties.getProperty("app.token"));
     }
 }
